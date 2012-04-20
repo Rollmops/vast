@@ -133,13 +133,13 @@ void QViewerCore::onWidgetClicked ( widget::WidgetInterface *origin, util::fvect
 		}
 	}
 
-	physicalCoordsChanged( physicalCoords );
+// 	physicalCoordsChanged( physicalCoords );
 	emitOnWidgetClicked( physicalCoords, mouseButton );
 }
 
 void QViewerCore::onWidgetMoved ( widget::WidgetInterface* /*origin*/, util::fvector4 physicalCoords, Qt::MouseButton mouseButton )
 {
-	physicalCoordsChanged( physicalCoords );
+// 	physicalCoordsChanged( physicalCoords );
 	emitOnWidgetMoved( physicalCoords, mouseButton );
 }
 

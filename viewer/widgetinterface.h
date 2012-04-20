@@ -60,7 +60,7 @@ public:
 	};
 
 	virtual void setEnableCrosshair( bool enable ) = 0;
-	virtual void updateScene() = 0;
+	virtual void updateScene() {};
 	virtual void setZoom( float zoom ) = 0;
 	virtual void addImage( const boost::shared_ptr<ImageHolder>  ) {};
 	virtual bool removeImage( const boost::shared_ptr< ImageHolder >  ) { return true; };

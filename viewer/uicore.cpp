@@ -274,10 +274,9 @@ WidgetEnsemble::Pointer UICore::getCurrentEnsemble() const
 bool UICore::registerEnsembleComponent( WidgetEnsembleComponent::Pointer component )
 {
 	if( m_WidgetMap.find( component->getWidgetInterface() ) != m_WidgetMap.end() ) {
-		LOG( Runtime, warning ) << "Widget with id" << component->getWidgetInterface()->getWidgetName() << "!";
+		LOG( Runtime, warning ) << "Widget with id" << component->getWidgetInterface()->getWidgetName() << " already exists!";
 		return false;
 	}
-
 	m_WidgetMap.insert( std::make_pair< widget::WidgetInterface *, WidgetEnsembleComponent::Pointer >( component->getWidgetInterface(), component ) );
 	return true;
 

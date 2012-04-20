@@ -74,7 +74,7 @@ void QGeomWidget::setup ( QViewerCore *core, QWidget *parent , PlaneOrientation 
 	connect( m_ViewerCore, SIGNAL( emitZoomChanged( float ) ), this, SLOT( setZoom( float ) ) );
 	connect( m_ViewerCore, SIGNAL( emitShowLabels( bool ) ), this, SLOT( setShowLabels( bool ) ) );
 	connect( m_ViewerCore, SIGNAL( emitSetEnableCrosshair( bool ) ), this, SLOT( setEnableCrosshair( bool ) ) );
-
+	m_ViewerCore->emitRefreshAllWidgets.connect( boost::bind( &QGeomWidget::updateScene, this ) );
 }
 
 void QGeomWidget::resizeEvent ( QResizeEvent *event )
@@ -342,11 +342,20 @@ void QGeomWidget::mousePressEvent ( QMouseEvent *e )
 		m_StartCoordsPair.first = e->x();
 		m_StartCoordsPair.second = e->y();
 	}
+	Qt::MouseButton mButton;
+	if( m_LeftMouseButtonPressed ) {
+		mButton = Qt::LeftButton;
+	}
 
-	if( m_LeftMouseButtonPressed )  m_ViewerCore->onWidgetClicked( this, physicalCoords, Qt::LeftButton );
-
-	if( m_RightMouseButtonPressed ) m_ViewerCore->onWidgetClicked( this, physicalCoords, Qt::RightButton );
-
+	if( m_RightMouseButtonPressed ) {
+		mButton = Qt::RightButton;
+	}
+	if( m_RightMouseButtonPressed || m_LeftMouseButtonPressed ) {
+		m_ViewerCore->emitGlobalPhysicalCoordsChanged( physicalCoords );
+		m_ViewerCore->emitRefreshAllWidgets();
+		m_ViewerCore->onWidgetClicked( this, physicalCoords, mButton );
+		
+	}
 }
 
 void QGeomWidget::mouseMoveEvent ( QMouseEvent *e )
@@ -375,15 +384,20 @@ void QGeomWidget::mouseMoveEvent ( QMouseEvent *e )
 	} else {
 		const util::fvector4 physicalCoords = getPhysicalCoordsFromMouseCoords(  e->x(), e->y() );
 
+		Qt::MouseButton mButton;
 		if( m_LeftMouseButtonPressed ) {
-			m_ViewerCore->onWidgetMoved( this, physicalCoords, Qt::LeftButton );
+			mButton = Qt::LeftButton;
 		}
 
 		if( m_RightMouseButtonPressed ) {
-			m_ViewerCore->onWidgetMoved( this, physicalCoords, Qt::RightButton );
+			mButton = Qt::RightButton;
+		}
+		if( m_RightMouseButtonPressed || m_LeftMouseButtonPressed ) {
+			m_ViewerCore->emitGlobalPhysicalCoordsChanged( physicalCoords );
+			m_ViewerCore->emitRefreshAllWidgets();
+			m_ViewerCore->onWidgetMoved( this, physicalCoords, mButton );
 		}
 	}
-
 }
 
 void QGeomWidget::mouseReleaseEvent ( QMouseEvent *e )
